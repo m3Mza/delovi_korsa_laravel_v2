@@ -4,21 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Korisnik;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Register Controller
+ * Registrovani korisnici automatski dobijaju tip 'kupac'.
+ */
 class RegisterController extends Controller
 {
-    // Show registration form
+    /**
+     * Prikaži formu za registraciju
+     */
     public function showRegistrationForm()
     {
         return view('auth.register');
     }
 
-    // Handle registration
+    /**
+     * Obradi registraciju novog korisnika
+     */
     public function register(Request $request)
     {
-        // Validate the input
+        // Validacija unetih podataka
         $request->validate([
             'ime' => 'required|string|max:100',
             'prezime' => 'required|string|max:100',
@@ -28,20 +35,22 @@ class RegisterController extends Controller
             'adresa' => 'nullable|string',
         ]);
 
-        // Create new kupac user
-        $korisnik = Korisnik::create([
+        // Kreiraj novog kupca
+        $noviKorisnik = Korisnik::create([
             'ime' => $request->ime,
             'prezime' => $request->prezime,
             'email' => $request->email,
-            'lozinka' => Hash::make($request->lozinka),
-            'tip_korisnika' => 'kupac', // Always create as kupac
+            'lozinka' => $request->lozinka,  // Čuva se kao običan tekst
+            'tip_korisnika' => 'kupac',
             'telefon' => $request->telefon,
             'adresa' => $request->adresa,
         ]);
 
-        // Log the user in
-        Auth::login($korisnik);
+        // Automatski prijavi korisnika nakon registracije
+        Auth::login($noviKorisnik);
 
-        return redirect()->route('home')->with('success', 'Uspešno ste se registrovali!');
+        return redirect()
+            ->route('home')
+            ->with('success', 'Uspešno ste se registrovali!');
     }
 }

@@ -26,6 +26,21 @@
                     <a href="#" class="text-gray-700 hover:text-blue-600">Početna</a>
                     <a href="/proizvodi" class="text-gray-700 hover:text-blue-600">Proizvodi</a>
                     <a href="/o-nama" class="text-gray-700 hover:text-blue-600">O Nama</a>
+                    
+                    @auth
+                        <a href="/wishlist" class="text-gray-700 hover:text-blue-600">Lista Želja</a>
+                        @if(Auth::user()->isAdmin())
+                            <a href="/admin/dashboard" class="text-gray-700 hover:text-blue-600">Admin Panel</a>
+                        @endif
+                        <span class="text-gray-600">{{ Auth::user()->ime }}</span>
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="text-gray-700 hover:text-blue-600">Odjavi se</button>
+                        </form>
+                    @else
+                        <a href="/login" class="text-gray-700 hover:text-blue-600">Prijava</a>
+                    @endauth
+                    
                     <a href="/korpa" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                         Korpa ({{ $cartItemsCount }})
                     </a>

@@ -13,7 +13,7 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #f9fafb;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -24,14 +24,14 @@
             background: white;
             padding: 40px;
             border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            color: #1f2937;
             margin-bottom: 30px;
         }
 
@@ -42,7 +42,7 @@
         label {
             display: block;
             margin-bottom: 5px;
-            color: #555;
+            color: #4b5563;
             font-weight: bold;
         }
 
@@ -50,18 +50,18 @@
         input[type="password"] {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
+            border: 1px solid #d1d5db;
             border-radius: 5px;
             font-size: 14px;
         }
 
         input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #2563eb;
         }
 
         .error {
-            color: #e74c3c;
+            color: #dc2626;
             font-size: 12px;
             margin-top: 5px;
         }
@@ -69,17 +69,17 @@
         .btn {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2563eb;
             color: white;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: background 0.2s;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
+            background: #1d4ed8;
         }
 
         .links {
@@ -88,7 +88,7 @@
         }
 
         .links a {
-            color: #667eea;
+            color: #2563eb;
             text-decoration: none;
         }
 
@@ -103,9 +103,9 @@
         }
 
         .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
     </style>
 </head>

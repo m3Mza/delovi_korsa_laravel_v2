@@ -6,80 +6,144 @@ use App\Models\Proizvod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Admin Controller
+ * 
+ * Kontroler za administratorski panel - upravljanje proizvodima u prodavnici.
+ * Sve metode zahtevaju da korisnik bude prijavljen i ima admin privilegije.
+ */
 class AdminController extends Controller
 {
-    public function __construct()
-    {
-        // Ensure only admins can access these methods
-        $this->middleware(function ($request, $next) {
-            if (!Auth::check() || !Auth::user()->isAdmin()) {
-                abort(403, 'Nemate pristup ovoj stranici.');
-            }
-            return $next($request);
-        });
-    }
-
-    // Show admin dashboard
+    /**
+     * Prikaži admin dashboard sa listom svih proizvoda
+     */
     public function dashboard()
     {
+        // Proveri da li je korisnik prijavljen i da li je admin
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Nemate pristup ovoj stranici.');
+        }
+
+        // Učitaj sve proizvode iz baze
         $proizvodi = Proizvod::all();
+        
         return view('admin.dashboard', compact('proizvodi'));
     }
 
-    // Show create product form
+    /**
+     * Prikaži formu za kreiranje novog proizvoda
+     */
     public function create()
     {
+        // Proveri admin pristup
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Nemate pristup ovoj stranici.');
+        }
+
         return view('admin.create');
     }
 
-    // Store new product
+    /**
+     * Sačuvaj novi proizvod u bazu podataka
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'naziv' => 'required|string|max:255',
-            'opis' => 'nullable|string',
-            'cena' => 'required|numeric|min:0',
-            'slika' => 'nullable|string|max:255',
-            'kategorija' => 'nullable|string|max:100',
-            'stanje' => 'nullable|integer|min:0',
+        // Proveri admin pristup
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Nemate pristup ovoj stranici.');
+        }
+
+        // Validacija unetih podataka
+        $validiraniPodaci = $request->validate([
+            'name' => 'required|string|max:255',      // Naziv je obavezan
+            'price' => 'required|numeric|min:0',       // Cena mora biti pozitivan broj
+            'image' => 'nullable|string|max:255',      // URL slike je opcioni
+            'category' => 'nullable|string|max:100',   // Kategorija je opciona
+            'brand' => 'nullable|string|max:100',      // Brend je opcioni
         ]);
 
-        Proizvod::create($request->all());
+        // Kreiraj novi proizvod u bazi
+        Proizvod::create([
+            'name' => $request->name,
+            'price' => $request->price,
+            'image' => $request->image,
+            'category' => $request->category,
+            'brand' => $request->brand,
+        ]);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Proizvod uspešno dodat!');
+        return redirect()
+            ->route('admin.dashboard')
+            ->with('success', 'Proizvod uspešno dodat!');
     }
 
-    // Show edit product form
+    /**
+     * Prikaži formu za izmenu postojećeg proizvoda
+     */
     public function edit($id)
     {
+        // Proveri admin pristup
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Nemate pristup ovoj stranici.');
+        }
+
+        // Pronađi proizvod po ID-u ili prikaži grešku
         $proizvod = Proizvod::findOrFail($id);
+        
         return view('admin.edit', compact('proizvod'));
     }
 
-    // Update product
+    /**
+     * Ažuriraj postojeći proizvod u bazi
+     */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'naziv' => 'required|string|max:255',
-            'opis' => 'nullable|string',
-            'cena' => 'required|numeric|min:0',
-            'slika' => 'nullable|string|max:255',
-            'kategorija' => 'nullable|string|max:100',
-            'stanje' => 'nullable|integer|min:0',
+        // Proveri admin pristup
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Nemate pristup ovoj stranici.');
+        }
+
+        // Validacija unetih podataka
+        $validiraniPodaci = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'image' => 'nullable|string|max:255',
+            'category' => 'nullable|string|max:100',
+            'brand' => 'nullable|string|max:100',
         ]);
 
+        // Pronađi proizvod
         $proizvod = Proizvod::findOrFail($id);
-        $proizvod->update($request->all());
+        
+        // Ažuriraj podatke proizvoda
+        $proizvod->update([
+            'name' => $request->name,
+            'price' => $request->price,
+            'image' => $request->image,
+            'category' => $request->category,
+            'brand' => $request->brand,
+        ]);
 
-        return redirect()->route('admin.dashboard')->with('success', 'Proizvod uspešno ažuriran!');
+        return redirect()
+            ->route('admin.dashboard')
+            ->with('success', 'Proizvod uspešno ažuriran!');
     }
 
-    // Delete product
+    /**
+     * Obriši proizvod iz baze
+     */
     public function destroy($id)
     {
+        // Proveri admin pristup
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            abort(403, 'Nemate pristup ovoj stranici.');
+        }
+
+        // Pronađi i obriši proizvod
         $proizvod = Proizvod::findOrFail($id);
         $proizvod->delete();
 
-        return redirect()->route('admin.dashboard')->with('success', 'Proizvod uspešno obrisan!');
+        return redirect()
+            ->route('admin.dashboard')
+            ->with('success', 'Proizvod uspešno obrisan!');
     }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\BazaController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -31,7 +33,16 @@ class HomeController extends Controller
         $products = $this->baza->sviProizvodi()->original;
         $categories = ['Sve', 'Motor', 'Kočnice', 'Transmisija', 'Elektrika', 'Filteri'];
 
-        return view('proizvodi', compact('products', 'categories'));
+        // Wishlist
+        $wishlistProductIds = [];
+        if (Auth::check()) {
+            $wishlistProductIds = DB::table('wishlist')
+                ->where('korisnik_id', Auth::id())
+                ->pluck('proizvod_id')
+                ->toArray();
+        }
+
+        return view('proizvodi', compact('products', 'categories', 'wishlistProductIds'));
     }
 
 public function korpa()
