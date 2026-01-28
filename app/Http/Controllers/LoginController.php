@@ -73,7 +73,7 @@ class LoginController extends Controller
         // Odjavi korisnika
         Auth::logout();
         
-        // Poništi sesiju
+        // Poništi sesiju 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
